@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Мои любимые фильмы</title>
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+            height: 100vh;
+            width: 100%;
+            background-image: linear-gradient(to right, #44384e, #2d3657);
+            color: #eee;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        #listLikesFilms {
+            padding-top: 100px;
+            text-align: center;
+        }
+        #arrow {
+            padding: 20px 0 0 30px;
+        }
+
+        #arrow img {
+            width: 40px;
+        }
+
+        table {
+            margin: 0 auto;
+            width: 50%;
+        }
+
+        tr, td {
+            border: 1px solid white;
+            padding: 10px 30px;
+        }
+
+        .deleteFilm {
+            float: right;
+        }
+
+    </style>
+</head>
+<body>
+<div id="arrow"><a href="/hello"><img src="icons8-стрелка-50.png"></a></div>
+<div id="listLikesFilms">
+    <h1>Мои любимые фильмы</h1>
+    <table id="tableFilm"></table>
+</div>
+</body>
+<script>
+    let elem = document.getElementById("tableFilm");
+
+    function listFilms() {
+        fetch("/getLikesFilms")
+            .then(response => response.json())
+            .then(res2 => {
+                let text = "";
+                for (let i = 0; i < res2.length; i++) {
+                    let id = res2[i].id;
+                    let title = res2[i].title;
+                    text = text + "<tr><td hidden>" +  id + "</td><td>" + title + "<img class='deleteFilm' src=\"icons8-удалить-26.png\"></td></tr>";
+                }
+                elem.innerHTML = text;
+            });
+    }
+    listFilms();
+
+    function deleteLikeFilm(event) {
+        let elem = event.target;
+        if (elem.className === 'deleteFilm') {
+            let id = elem.parentElement.parentElement.children[0].textContent;
+            console.log(id);
+
+            fetch("/deleteLikeFilm/" + id , {
+                method: 'DELETE',
+            }).then(res => listFilms())
+        }
+    }
+
+    let element = document.getElementById("tableFilm");
+    element.addEventListener("click", deleteLikeFilm);
+
+</script>
+</html>

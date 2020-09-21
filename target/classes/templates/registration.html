@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <title>Spring Security Example </title>
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+            height: 100vh;
+            width: 100%;
+            background-image: linear-gradient(to right, #44384e, #2d3657);
+            color: #eee;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        .registration {
+            margin: 200px auto 0 auto;
+            width: max-content;
+            text-align: center;
+        }
+
+        input[type="email"],
+        input[type="password"],
+        input[type="text"] {
+            background: none;
+            border: none;
+            border-bottom: 1px solid #666;
+            width: 250px;
+            height: 50px;
+            font-size: 14px;
+            outline: none;
+            color: #eee;
+        }
+
+        input[type="email"]:hover,
+        input[type="password"]:hover,
+        input[type="text"]:hover,
+        input[type="submit"]:hover,
+        input[type="email"]:focus,
+        input[type="password"]:focus,
+        input[type="text"]:focus,
+        input[type="submit"]:focus {
+            border-color: white;
+        }
+
+        input[type="submit"] {
+            width: 200px;
+            padding: 15px 0;
+            background: none;
+            border: 1px solid #666;
+            color: white;
+            font-size: 14px;
+            margin: 20px 0;
+        }
+
+        a {
+            text-decoration: none;
+            color: #666;
+        }
+
+        a p {
+            padding: 20px 0 0 0;
+            text-decoration: underline #666;
+        }
+
+        a p:hover {
+            color: #eee;
+            text-decoration: #eee;
+        }
+    </style>
+</head>
+<body>
+
+<div class="message" th:if="${param.error}">
+    Неверный логин или пароль
+</div>
+<form class="registration" action="/registration" method="post">
+    <h2>Регистрация</h2>
+    <div><input type="email" name="email" placeholder="E-mail" required/></div>
+    <div><input type="text" name="name" placeholder="Имя" required/></div>
+    <div><input type="password" name="password" placeholder="Пароль" required/></div>
+    <div><a href="/login"><p>У вас уже есть аккаунт? Войти</p></a></div>
+    <div><input type="submit" value="Зарегистрироваться"/></div>
+</form>
+</body>
+</html>

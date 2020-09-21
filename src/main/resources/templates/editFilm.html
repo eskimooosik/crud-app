@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактировать фильм</title>
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+            height: 100vh;
+            width: 100%;
+            background-image: linear-gradient(to right, #44384e, #2d3657);
+            color: #eee;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        .block {
+            padding-top: 100px;
+        }
+        input[type="text"] {
+            background: none;
+            border: none;
+            border-bottom: 1px solid #666;
+            width: 250px;
+            height: 50px;
+            font-size: 14px;
+            outline: none;
+            color: #eee;
+        }
+
+        input[type="text"]:hover,
+        input[type="text"]:focus,
+        input[type="submit"]:hover,
+        input[type="submit"]:focus {
+            border-color: white;
+        }
+
+        input[type="submit"] {
+            width: 200px;
+            padding: 15px 0;
+            background: none;
+            border: 1px solid #666;
+            color: white;
+            font-size: 14px;
+            margin: 20px 0;
+        }
+
+        table {
+            margin: 0 auto;
+            width: 80%;
+        }
+
+        form {
+            padding-top: 30px;
+            text-align: center;
+        }
+
+        tr, td {
+            border: 1px solid white;
+            padding: 10px 30px;
+        }
+
+        #adminPage {
+            display: flex;
+        }
+        #adminPage div {
+            width: 50%;
+            text-align: center;
+        }
+
+        span {
+            color: #666;
+            text-decoration: underline #666;
+        }
+        span:hover {
+            color: #eee;
+            text-decoration: underline #eee;
+            cursor: pointer;
+        }
+
+        #updateTitleBtn {
+            background: none;
+            border: 0;
+        }
+
+        #updateTitleBtn:active,
+        #updateTitleBtn:focus,
+        #updateTitleBtn:hover {
+            outline: none;
+            cursor: pointer;
+        }
+
+        #updateTitle {
+            width: 200px;
+        }
+        #update {
+            display: flex;
+            flex-wrap: nowrap;
+            margin: 0;
+        }
+
+        #arrow {
+            padding: 20px 0 0 30px;
+        }
+
+        #arrow img {
+            width: 40px;
+        }
+
+    </style>
+</head>
+<body>
+<div id="arrow"><a href="/hello"><img src="icons8-стрелка-50.png"></a></div>
+<div id="adminPage">
+<div class="block">
+    <h1>Добавить фильм</h1>
+    <form action="/addFilm" method="post">
+        <input type="text" placeholder="Название фильма" name="title" required> <br>
+        <input type="submit" value="Добавить">
+    </form>
+</div>
+
+<div class="block" >
+    <h1>Список фильмов</h1>
+    <table id="tableFilm"></table>
+</div>
+
+</div>
+
+<script>
+    let elem = document.getElementById("tableFilm");
+
+    function listFilms() {
+        fetch("/getAllFilms")
+            .then(response => response.json())
+            .then(res2 => {
+                let text = "";
+                for (let i = 0; i < res2.length; i++) {
+                    let id = res2[i].id;
+                    let title = res2[i].title;
+                    text = text + "<tr> <td>" + id + "</td>" + "<td>" + title + "</td>" +
+                        "<td><span class='updateFilm'>Изменить</span></td><td><span class='deleteFilm'>Удалить</span></td></tr>";
+                }
+                elem.innerHTML = text;
+            });
+    }
+
+    listFilms();
+
+
+    function deleteFilm(event) {
+        let elem = event.target;
+        if (elem.className === 'deleteFilm') {
+            let id = elem.parentElement.parentElement.children[0].textContent;
+            fetch("/deleteFilm/" + id , {
+                method: 'DELETE',
+            }).then(res => listFilms())
+        }
+    }
+
+    let updateFilmId;
+    function updateFilm(event) {
+        let elem;
+        elem = event.target;
+        if (elem.className === 'updateFilm') {
+            updateFilmId = elem.parentElement.parentElement.children[0].textContent;
+            let filmTitle = elem.parentElement.parentElement.children[1].textContent;
+            elem.parentElement.parentElement.children[1].innerHTML = `<p id="update"><input id="updateTitle" type="text" value="${filmTitle}">
+           <button onclick="saveNewFilmTitle()" id="updateTitleBtn"><img src="icons8-галочка-26.png"></button></p>`;
+        }
+    }
+
+   function saveNewFilmTitle() {
+       let newFilmTitle = document.getElementById("updateTitle").value;
+
+       let film = {
+           id : updateFilmId,
+           title : newFilmTitle
+       }
+
+       fetch("/updateFilm", {
+           method: 'PUT',
+           headers: {
+               'Content-Type': 'application/json;charset=utf-8'
+           },
+           body: JSON.stringify(film)
+       })
+           .then(res => listFilms())
+    }
+
+
+    let element = document.getElementById("tableFilm");
+    element.addEventListener("click", deleteFilm);
+    element.addEventListener("click", updateFilm);
+
+
+
+</script>
+
+</body>
+</html>
